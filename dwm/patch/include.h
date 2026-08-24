@@ -1,0 +1,37 @@
+/* Bar functionality */
+#include "bar_indicators.h"
+#include "bar_tagicons.h"
+#include "bar.h"
+
+#include "bar_ltsymbol.h"
+#include "bar_status.h"
+#include "bar_tags.h"
+#include "bar_wintitle.h"
+#include "bar_awesomebar.h"
+#include "bar_systray.h"
+#include "bar_wintitleactions.h"
+
+/* Other patches */
+#include "cyclelayouts.h"
+#include "fullscreen.h"
+#include "games.h"
+#include "pertag.h"
+#include "scratchpad.h"
+#include "shift.h"
+#include "shiftview.h"
+#include "stacker.h"
+#include "swallow.h"
+#include "vanitygaps.h"
+#include "warp.h"
+/* Layouts */
+#include "layout_bstack.h"
+#include "layout_bstackhoriz.h"
+#include "layout_centeredmaster.h"
+#include "layout_centeredfloatingmaster.h"
+#include "layout_columns.h"
+#include "layout_fibonacci.h"
+#include "layout_grid.h"
+#include "layout_horizgrid.h"
+#include "layout_monocle.h"
+#include "layout_tile.h"
+
