@@ -1,0 +1,47 @@
+#!/bin/bash
+
+FILE="$1"
+
+# Terminal storlek i tecken
+TERMW=$(tput cols)
+TERMH=$(tput lines)
+
+# Gör preview större (80% av terminal)
+WIDTH=$((TERMW * 8 / 10))
+HEIGHT=$((TERMH * 8 / 10))
+
+MIME=$(file --mime-type -Lb "$FILE")
+
+image() {
+    chafa --fill=block --size="${WIDTH}x${HEIGHT}" "$1"
+}
+
+case "$MIME" in
+  image/*)
+    image "$FILE"
+    ;;
+
+  video/*)
+    THUMB="/tmp/lf_thumb.jpg"
+    ffmpegthumbnailer -i "$FILE" -o "$THUMB" -s 0
+    image "$THUMB"
+    ;;
+
+  application/pdf)
+    THUMB="/tmp/lf_pdf.jpg"
+    pdftoppm -jpeg -f 1 -singlefile "$FILE" /tmp/lf_pdf >/dev/null 2>&1
+    image "/tmp/lf_pdf.jpg"
+    ;;
+
+  text/*)
+    bat --color=always --style=numbers --line-range=:200 "$FILE" 2>/dev/null \
+    || highlight --out-format=ansi "$FILE" 2>/dev/null \
+    || cat "$FILE"
+    ;;
+
+  *)
+    echo "$MIME file – no preview available."
+    ;;
+esac
+
+exit 1

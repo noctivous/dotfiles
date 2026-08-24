@@ -1,0 +1,70 @@
+# ===== BASICS  =====
+set shellopts '-eu'
+set ifs "\n"
+set scrolloff 10
+set period 1
+set hiddenfiles ".*:*.aux:*.log:*.out:*.toc"
+set cleaner ~/.config/lf/clean.sh
+set previewer ~/.config/lf/scope
+set autoquit true
+set relativenumber
+
+# ===== KEYBINDS  =====
+map e $ nvim -u ~/.config/nvim/dev_init.vim "$f"
+
+map O %nsxiv -t .
+map o $nsxiv "$f"
+map r %atril "$f"
+map G %gimp "$f"
+
+map D delete
+map E extract
+map f fuzzy
+map <c-n> push :mkdir<space>""<left>
+map <c-r> reload
+map <c-s> set hidden!
+map <enter> shell
+
+# ===== COMMANDS  =====
+cmd open ${{
+    case $(file --mime-type "$(readlink -f $f)" -b) in
+        text/*) $EDITOR $fx ;;
+        image/*) nsxiv "$f" ;;
+        application/pdf) zathura "$f" ;;
+        video/*) mpv "$f" ;;
+        *) xdg-open "$f" ;;
+    esac
+}}
+
+cmd mkdir $mkdir -p "$@"
+
+cmd delete ${{
+    printf "move %s to ~/dustbin? [y/N] " "$fx"
+    read ans
+    [ "$ans" != "y" ] && exit
+
+    mkdir -p ~/dustbin
+
+    for file in $fx; do
+        base=$(basename "$file")
+        dest="$HOME/dustbin/$base"
+
+        if [ -e "$dest" ]; then
+            dest="$HOME/dustbin/$(date +%Y%m%d-%H%M%S)_$base"
+        fi
+
+        mv -- "$file" "$dest"
+    done
+}}
+
+cmd extract ${{
+    printf "extract %s? [y/N] " "$fx"
+    read ans
+    [ "$ans" = "y" ] && atool -x "$fx"
+}}
+
+cmd fuzzy ${{
+    file=$(fd . . | fzf)
+
+    [ -n "$file" ] && lf -remote "send $id select \"$file\""
+}}
